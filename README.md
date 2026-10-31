@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PlanPal 🎪💍🎂
 
-## Getting Started
+> **PlanPal** is an intelligent, GenAI-powered event planning assistant tailored for **weddings**, **birthdays**, and **community events**.
 
-First, run the development server:
+Built with Next.js App Router, TypeScript strict mode, Zod validation, Vitest test suite, and WCAG 2.1 AA accessible design.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🏛️ Layered Architecture
+
+PlanPal strictly enforces a decoupled unidirectional architecture:
+
+```
+/src/domain (Pure Business Logic)
+   └── Zero I/O, zero framework dependencies, pure math & models
+       ├── Event Intake Schemas & Validations
+       ├── Smart Budget Allocation & Variance Engine
+       ├── Milestone & Day-of Run-of-Show Timeline Scheduler
+       └── Vendor Procurement Manager
+         ↓
+/src/services (AI & Server Integrations)
+   └── Server-only AI client, PII sanitization, structured Zod parsing
+         ↓
+/src/app/api (Thin Route Handlers)
+   └── Thin request validation, HTTP status codes, error formatting
+         ↓
+/src/components (UI Layer)
+   └── WCAG 2.1 AA accessible presentation, responsive design tokens, zero business logic
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛡️ Security & Privacy Guarantees
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **No Client API Keys**: External AI services are invoked only server-side.
+- **PII Scrubbing**: Automatic redaction of emails, phone numbers, and SSNs before sending any user text to AI models.
+- **Strict Zod Parsing**: Every user input and every AI response is strictly validated against schemas.
+- **XSS Prevention**: Never uses `dangerouslySetInnerHTML`.
+- **Untrusted Input**: All user-provided text is sanitized and bounded.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## ♿ Accessibility (WCAG 2.1 AA)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Semantic HTML first, supplemented with ARIA roles (`role="tablist"`, `role="tab"`, `role="tabpanel"`, `role="dialog"`).
+- Full keyboard operability (Arrow key tab cycling, Escape key modal dismissal).
+- High-contrast color tokens exceeding 4.5:1 ratio.
+- Visible focus rings (`:focus-visible` outline with offset).
+- Respects `prefers-reduced-motion` media query.
+- Skip link for screen readers.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧪 Testing & Quality Assurance
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Unit & Integration Tests**: 49 tests across 12 test suites covering every domain calculation, API route handler, and UI component.
+- **Type Checking**: Strict TypeScript mode (`noImplicitAny`, `strictNullChecks`).
+- **Linting**: ESLint with Prettier integration.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Run unit tests
+npm test
+
+# Run TypeScript type check
+npm run typecheck
+
+# Run ESLint linter
+npm run lint
+
+# Build production bundle
+npm run build
+```
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Start local development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to launch PlanPal.
