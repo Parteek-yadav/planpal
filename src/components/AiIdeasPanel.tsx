@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { AiPlanSuggestion } from "@/services";
 
 interface AiIdeasPanelProps {
@@ -8,23 +8,42 @@ interface AiIdeasPanelProps {
 }
 
 /**
- * Presentation panel displaying GenAI personalized concepts,
- * color palettes, timeline tips, budget strategies, and contingency plans.
+ * Presentation panel displaying GenAI personalized concepts:
+ * Themes, interactive color palettes, activities, customized menus, and decoration plans.
+ * Implements accessible loading status, zero layout shift placeholders, and focus management.
  */
 export function AiIdeasPanel({
   suggestions,
   isLoading,
-  onRegenerate
+  onRegenerate,
 }: AiIdeasPanelProps): React.JSX.Element {
+  const overviewHeadingRef = useRef<HTMLHeadingElement>(null);
+  const wasLoadingRef = useRef<boolean>(isLoading);
+
+  // Focus management: when AI finishes loading, shift focus to overview heading
+  useEffect(() => {
+    if (wasLoadingRef.current && !isLoading) {
+      overviewHeadingRef.current?.focus();
+    }
+    wasLoadingRef.current = isLoading;
+  }, [isLoading]);
+
   return (
     <div
       id="tabpanel-ai_plan"
       role="tabpanel"
       aria-labelledby="tab-ai_plan"
       tabIndex={0}
-      style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+      style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}
     >
-      {/* Overview Card */}
+      {/* Live status announcement */}
+      <div role="status" aria-live="polite" className="visually-hidden">
+        {isLoading
+          ? "AI assistant is generating personalized blueprints and budget recommendations..."
+          : "AI blueprint generation completed successfully."}
+      </div>
+
+      {/* Strategy Overview Card */}
       <section className="glass-panel" aria-labelledby="section-overview-title">
         <div
           style={{
@@ -32,41 +51,63 @@ export function AiIdeasPanel({
             justifyContent: "space-between",
             alignItems: "flex-start",
             flexWrap: "wrap",
-            gap: "1rem"
+            gap: "1rem",
           }}
         >
-          <div>
+          <div style={{ flex: 1, minWidth: "280px" }}>
             <h2
               id="section-overview-title"
+              ref={overviewHeadingRef}
+              tabIndex={-1}
               style={{
-                fontSize: "1.25rem",
-                fontWeight: "700",
+                fontSize: "1.35rem",
+                fontWeight: "800",
                 color: "var(--text-primary)",
                 marginBottom: "0.5rem",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.5rem"
+                gap: "0.5rem",
               }}
             >
-              <span>🤖</span> AI Event Strategy Overview
+              <span>🤖</span> AI Event Strategy Blueprint
             </h2>
-            <p style={{ color: "var(--text-secondary)", maxWidth: "800px", lineHeight: "1.6" }}>
-              {suggestions.overview}
-            </p>
+            {isLoading ? (
+              <div
+                className="skeleton-card"
+                style={{ minHeight: "80px", justifyContent: "center" }}
+                role="status"
+                aria-label="Generating strategy summary"
+              >
+                <span>⚡ Generating strategic executive overview...</span>
+              </div>
+            ) : (
+              <p
+                style={{
+                  color: "var(--text-secondary)",
+                  maxWidth: "850px",
+                  lineHeight: "1.6",
+                  fontSize: "1rem",
+                }}
+              >
+                {suggestions.overview}
+              </p>
+            )}
           </div>
+
           <button
             id="btn-regenerate-ai"
             type="button"
             className="btn btn-primary"
             onClick={onRegenerate}
             disabled={isLoading}
+            style={{ minHeight: "44px" }}
           >
-            {isLoading ? "⚡ Analyzing..." : "🔄 Refresh AI Insights"}
+            {isLoading ? "⚡ Analyzing Data..." : "🔄 Refresh AI Insights"}
           </button>
         </div>
       </section>
 
-      {/* Theme Concepts with Color Palettes */}
+      {/* 1. Theme Concepts with Color Palettes */}
       <section className="glass-panel" aria-labelledby="section-themes-title">
         <h2
           id="section-themes-title"
@@ -76,91 +117,234 @@ export function AiIdeasPanel({
             marginBottom: "1rem",
             display: "flex",
             alignItems: "center",
-            gap: "0.5rem"
+            gap: "0.5rem",
           }}
         >
           <span>🎨</span> Creative Themes & Color Schemes
         </h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "1.25rem"
-          }}
-        >
-          {suggestions.themeIdeas.map((theme, idx) => (
-            <article
-              key={`theme-${idx}`}
-              style={{
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: "10px",
-                padding: "1.25rem",
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.75rem"
-              }}
+
+        {isLoading ? (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.25rem",
+            }}
+          >
+            <div
+              className="skeleton-card"
+              role="status"
+              aria-label="Loading Theme Concept 1"
             >
-              <h3
+              <span>🎨 Crafting custom theme palette...</span>
+            </div>
+            <div
+              className="skeleton-card"
+              role="status"
+              aria-label="Loading Theme Concept 2"
+            >
+              <span>🎨 Designing acoustic aesthetic...</span>
+            </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.25rem",
+            }}
+          >
+            {suggestions.themeIdeas.map((theme, idx) => (
+              <article
+                key={`theme-${idx}`}
                 style={{
-                  fontSize: "1.05rem",
-                  fontWeight: "600",
-                  color: "var(--text-primary)"
+                  background: "var(--bg-input)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "10px",
+                  padding: "1.25rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.75rem",
                 }}
               >
-                {theme.title}
-              </h3>
-              <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", flex: 1 }}>
-                {theme.description}
-              </p>
-              <div>
-                <span
+                <h3
                   style={{
-                    fontSize: "0.75rem",
-                    color: "var(--text-muted)",
-                    display: "block",
-                    marginBottom: "0.35rem"
+                    fontSize: "1.1rem",
+                    fontWeight: "700",
+                    color: "var(--text-primary)",
                   }}
                 >
-                  Curated Palette:
-                </span>
-                <div
-                  style={{ display: "flex", gap: "0.5rem" }}
-                  role="list"
-                  aria-label={`Color palette for ${theme.title}`}
+                  {theme.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "var(--text-secondary)",
+                    lineHeight: "1.5",
+                  }}
                 >
-                  {theme.colorPalette.map((color, cIdx) => (
-                    <div
-                      key={`color-${idx}-${cIdx}`}
-                      role="listitem"
-                      title={color}
-                      style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "8px",
-                        backgroundColor: color,
-                        border: "1px solid rgba(255, 255, 255, 0.2)",
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
-                      }}
-                      aria-label={`Color ${color}`}
-                    />
-                  ))}
+                  {theme.description}
+                </p>
+
+                {/* Color swatches with text labels */}
+                <div style={{ marginTop: "auto" }}>
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: "600",
+                      color: "var(--text-muted)",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Recommended Palette
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.5rem",
+                      marginTop: "0.35rem",
+                      flexWrap: "wrap",
+                    }}
+                    role="list"
+                    aria-label={`Color palette for ${theme.title}`}
+                  >
+                    {theme.colorPalette.map((hex, colorIdx) => (
+                      <div
+                        key={`color-${colorIdx}`}
+                        role="listitem"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.25rem",
+                          fontSize: "0.75rem",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: "22px",
+                            height: "22px",
+                            borderRadius: "4px",
+                            backgroundColor: hex,
+                            border: "1px solid var(--border-strong)",
+                            display: "inline-block",
+                          }}
+                          aria-hidden="true"
+                        />
+                        <span>{hex}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Grid: Budget Optimization + Contingency Plan */}
+      {/* 2. Personalized Activities */}
+      <section className="glass-panel" aria-labelledby="section-activities-title">
+        <h2
+          id="section-activities-title"
+          style={{
+            fontSize: "1.2rem",
+            fontWeight: "700",
+            marginBottom: "1rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+          }}
+        >
+          <span>🎯</span> Curated Activities & Experiences
+        </h2>
+
+        {isLoading ? (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.25rem",
+            }}
+          >
+            <div className="skeleton-card" role="status" aria-label="Loading Activities">
+              <span>🎯 Customizing interactive games...</span>
+            </div>
+            <div className="skeleton-card" role="status" aria-label="Loading Activities">
+              <span>🎯 Aligning guest count pacing...</span>
+            </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.25rem",
+            }}
+          >
+            {suggestions.activities.map((act, idx) => (
+              <article
+                key={`act-${idx}`}
+                style={{
+                  background: "var(--bg-input)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "10px",
+                  padding: "1.25rem",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: "1.05rem",
+                      fontWeight: "700",
+                      color: "var(--text-primary)",
+                    }}
+                  >
+                    {act.name}
+                  </h3>
+                  <span className="badge badge-community">
+                    ⏱️ {act.durationMinutes} min
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "var(--text-secondary)",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {act.description}
+                </p>
+                <div
+                  style={{
+                    marginTop: "0.75rem",
+                    fontSize: "0.8rem",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  Audience: <strong>{act.targetAudience}</strong>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* 3. Budget Optimization & Contingency */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "1.5rem"
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "1.5rem",
         }}
       >
-        {/* Budget Optimization Tips */}
+        {/* Budget Optimization */}
         <section className="glass-panel" aria-labelledby="section-budget-tips-title">
           <h2
             id="section-budget-tips-title"
@@ -170,20 +354,20 @@ export function AiIdeasPanel({
               marginBottom: "1rem",
               display: "flex",
               alignItems: "center",
-              gap: "0.5rem"
+              gap: "0.5rem",
             }}
           >
             <span>💡</span> Budget Optimization Strategies
           </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {suggestions.budgetOptimizationTips.map((tip, idx) => (
               <div
-                key={`opt-${idx}`}
+                key={`btip-${idx}`}
                 style={{
                   padding: "0.85rem",
-                  background: "rgba(255, 255, 255, 0.02)",
+                  background: "var(--bg-input)",
                   borderRadius: "8px",
-                  borderLeft: "3px solid var(--accent-emerald)"
+                  border: "1px solid var(--border-subtle)",
                 }}
               >
                 <div
@@ -191,32 +375,15 @@ export function AiIdeasPanel({
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    marginBottom: "0.25rem"
+                    marginBottom: "0.35rem",
                   }}
                 >
-                  <span
-                    style={{
-                      fontWeight: "600",
-                      fontSize: "0.9rem",
-                      color: "var(--text-primary)"
-                    }}
-                  >
+                  <strong style={{ fontSize: "0.95rem", color: "var(--text-primary)" }}>
                     {tip.category}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "var(--status-success-text)",
-                      fontWeight: "600",
-                      background: "var(--status-success-bg)",
-                      padding: "0.15rem 0.45rem",
-                      borderRadius: "4px"
-                    }}
-                  >
-                    {tip.estimatedImpact}
-                  </span>
+                  </strong>
+                  <span className="badge badge-community">✓ {tip.estimatedImpact}</span>
                 </div>
-                <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
                   {tip.savingStrategy}
                 </p>
               </div>
@@ -224,7 +391,7 @@ export function AiIdeasPanel({
           </div>
         </section>
 
-        {/* Contingency Plan & Timeline Advice */}
+        {/* Contingency Plan */}
         <section className="glass-panel" aria-labelledby="section-contingency-title">
           <h2
             id="section-contingency-title"
@@ -234,63 +401,78 @@ export function AiIdeasPanel({
               marginBottom: "1rem",
               display: "flex",
               alignItems: "center",
-              gap: "0.5rem"
+              gap: "0.5rem",
             }}
           >
-            <span>🛡️</span> Risk & Contingency Playbook
+            <span>🛡️</span> Risk & Weather Contingency
           </h2>
           <div
             style={{
               padding: "1rem",
-              background: "rgba(244, 63, 94, 0.05)",
-              border: "1px solid rgba(244, 63, 94, 0.2)",
+              background: "var(--status-warning-bg)",
+              border: "1px solid var(--status-warning-border)",
               borderRadius: "8px",
-              marginBottom: "1rem"
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
             }}
           >
-            <h3
-              style={{
-                fontSize: "0.95rem",
-                fontWeight: "600",
-                color: "var(--status-error-text)",
-                marginBottom: "0.35rem"
-              }}
-            >
-              Risk Scenario: {suggestions.contingencyPlan.riskScenario}
-            </h3>
-            <p
-              style={{
-                fontSize: "0.85rem",
-                color: "var(--text-secondary)",
-                marginBottom: "0.5rem"
-              }}
-            >
-              <strong>Mitigation:</strong> {suggestions.contingencyPlan.mitigation}
-            </p>
-            <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-              <strong>Backup Plan:</strong> {suggestions.contingencyPlan.backupOption}
-            </p>
+            <div>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: "700",
+                  textTransform: "uppercase",
+                  color: "var(--status-warning-text)",
+                }}
+              >
+                Identified Risk
+              </span>
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  fontWeight: "600",
+                  color: "var(--text-primary)",
+                }}
+              >
+                {suggestions.contingencyPlan.riskScenario}
+              </p>
+            </div>
+            <div>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: "700",
+                  textTransform: "uppercase",
+                  color: "var(--status-warning-text)",
+                }}
+              >
+                Mitigation Strategy
+              </span>
+              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                {suggestions.contingencyPlan.mitigation}
+              </p>
+            </div>
+            <div>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: "700",
+                  textTransform: "uppercase",
+                  color: "var(--status-warning-text)",
+                }}
+              >
+                Emergency Pivot
+              </span>
+              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                {suggestions.contingencyPlan.backupOption}
+              </p>
+            </div>
           </div>
-
-          <h3
-            style={{
-              fontSize: "0.95rem",
-              fontWeight: "600",
-              color: "var(--text-primary)",
-              marginBottom: "0.5rem"
-            }}
-          >
-            Key Timing Advice:
-          </h3>
-          <ul style={{ paddingLeft: "1.25rem", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
-            {suggestions.customTimelineTips.map((tip, idx) => (
-              <li key={`ttip-${idx}`} style={{ marginBottom: "0.5rem" }}>
-                <strong>{tip.title} ({tip.phase}):</strong> {tip.tip}
-              </li>
-            ))}
-          </ul>
         </section>
       </div>
     </div>
   );
 }
+
+export default AiIdeasPanel;

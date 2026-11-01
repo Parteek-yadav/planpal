@@ -11,7 +11,7 @@ describe("BudgetTracker Component", () => {
     remainingBudget: 5500,
     unallocatedBudget: 1000,
     isOverBudget: false,
-    variancePercentage: -55
+    variancePercentage: -55,
   };
 
   const mockItems: BudgetItem[] = [
@@ -21,8 +21,8 @@ describe("BudgetTracker Component", () => {
       name: "Banquet Hall",
       allocatedAmount: 5000,
       actualAmount: 4500,
-      isPaid: true
-    }
+      isPaid: true,
+    },
   ];
 
   it("renders budget metrics summary cards correctly", () => {
@@ -32,7 +32,7 @@ describe("BudgetTracker Component", () => {
         items={mockItems}
         onUpdateItemActual={vi.fn()}
         onTogglePaid={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText("$10,000")).toBeInTheDocument();
@@ -49,7 +49,7 @@ describe("BudgetTracker Component", () => {
         items={mockItems}
         onUpdateItemActual={vi.fn()}
         onTogglePaid={handleTogglePaid}
-      />
+      />,
     );
 
     const checkbox = screen.getByRole("checkbox");
@@ -65,7 +65,7 @@ describe("BudgetTracker Component", () => {
         items={mockItems}
         onUpdateItemActual={handleUpdate}
         onTogglePaid={vi.fn()}
-      />
+      />,
     );
 
     const editBtn = screen.getByRole("button", { name: /Edit Cost/i });

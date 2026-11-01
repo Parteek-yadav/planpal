@@ -3,7 +3,7 @@ import {
   calculateDefaultBudgetAllocation,
   summarizeBudget,
   updateBudgetItem,
-  calculateCategorySubtotals
+  calculateCategorySubtotals,
 } from "./calculator";
 import { BudgetItem } from "./types";
 
@@ -46,7 +46,7 @@ describe("Budget Calculator Domain Functions", () => {
         name: "Banquet Hall",
         allocatedAmount: 10000,
         actualAmount: 9500,
-        isPaid: true
+        isPaid: true,
       },
       {
         id: "b2",
@@ -54,8 +54,8 @@ describe("Budget Calculator Domain Functions", () => {
         name: "Photographer",
         allocatedAmount: 3000,
         actualAmount: 3200,
-        isPaid: false
-      }
+        isPaid: false,
+      },
     ];
 
     it("calculates totals, remaining budget, and under-budget status correctly", () => {
@@ -76,8 +76,8 @@ describe("Budget Calculator Domain Functions", () => {
           name: "Luxury Estate",
           allocatedAmount: 10000,
           actualAmount: 12000,
-          isPaid: true
-        }
+          isPaid: true,
+        },
       ];
 
       const summary = summarizeBudget(10000, overspentItems);
@@ -95,8 +95,8 @@ describe("Budget Calculator Domain Functions", () => {
         name: "Custom Birthday Cake",
         allocatedAmount: 300,
         actualAmount: 0,
-        isPaid: false
-      }
+        isPaid: false,
+      },
     ];
 
     it("updates item values immutably", () => {
@@ -104,7 +104,7 @@ describe("Budget Calculator Domain Functions", () => {
         id: "b1",
         actualAmount: 325,
         isPaid: true,
-        notes: "Deposit paid"
+        notes: "Deposit paid",
       });
 
       expect(updated).not.toBe(initialItems);
@@ -122,7 +122,7 @@ describe("Budget Calculator Domain Functions", () => {
           name: "Flowers",
           allocatedAmount: 500,
           actualAmount: 400,
-          isPaid: true
+          isPaid: true,
         },
         {
           id: "b2",
@@ -130,8 +130,8 @@ describe("Budget Calculator Domain Functions", () => {
           name: "Band",
           allocatedAmount: 1200,
           actualAmount: 1200,
-          isPaid: true
-        }
+          isPaid: true,
+        },
       ];
 
       const updated = updateBudgetItem(multiItems, { id: "b1", actualAmount: 450 });
@@ -149,7 +149,7 @@ describe("Budget Calculator Domain Functions", () => {
           name: "Venue",
           allocatedAmount: 5000,
           actualAmount: 4800,
-          isPaid: true
+          isPaid: true,
         },
         {
           id: "2",
@@ -157,7 +157,7 @@ describe("Budget Calculator Domain Functions", () => {
           name: "Catering",
           allocatedAmount: 3000,
           actualAmount: 3200,
-          isPaid: true
+          isPaid: true,
         },
         {
           id: "3",
@@ -165,8 +165,8 @@ describe("Budget Calculator Domain Functions", () => {
           name: "Balloons",
           allocatedAmount: 400,
           actualAmount: 380,
-          isPaid: true
-        }
+          isPaid: true,
+        },
       ];
 
       const subtotals = calculateCategorySubtotals(items);

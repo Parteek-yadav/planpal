@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { EventPlanInput, EventType } from "@/domain";
+import {
+  EventPlanInput,
+  EventType,
+  DietaryConstraint,
+  AccessibilityConstraint,
+} from "@/domain";
 
 interface EventIntakeModalProps {
   readonly isOpen: boolean;
@@ -8,15 +13,33 @@ interface EventIntakeModalProps {
   readonly isSubmitting: boolean;
 }
 
+const DIETARY_OPTIONS: readonly { id: DietaryConstraint; label: string }[] = [
+  { id: "vegan", label: "🌱 Vegan" },
+  { id: "vegetarian", label: "🥗 Vegetarian" },
+  { id: "gluten_free", label: "🌾 Gluten-Free" },
+  { id: "nut_free", label: "🥜 Nut-Free" },
+  { id: "halal", label: "🍖 Halal" },
+  { id: "kosher", label: "✡️ Kosher" },
+  { id: "dairy_free", label: "🥛 Dairy-Free" },
+];
+
+const ACCESSIBILITY_OPTIONS: readonly { id: AccessibilityConstraint; label: string }[] = [
+  { id: "wheelchair_accessible", label: "♿ Wheelchair Access" },
+  { id: "asl_interpreter", label: "🤟 ASL Interpreter" },
+  { id: "quiet_space", label: "🤫 Quiet Sensory Room" },
+  { id: "service_animal_friendly", label: "🐕 Service Animal Friendly" },
+];
+
 /**
  * Accessible dialog modal for user event intake and customization.
- * Implements WCAG 2.1 AA dialog keyboard interactions and focus containment.
+ * Implements WCAG 2.1 AA dialog keyboard interactions, focus containment,
+ * and comprehensive constraints selection (dietary, accessibility, kids).
  */
 export function EventIntakeModal({
   isOpen,
   onClose,
   onSubmit,
-  isSubmitting
+  isSubmitting,
 }: EventIntakeModalProps): React.JSX.Element | null {
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +50,10 @@ export function EventIntakeModal({
   const [totalBudget, setTotalBudget] = useState("25000");
   const [location, setLocation] = useState("");
   const [theme, setTheme] = useState("");
-  const [specialNotes, setSpecialNotes] = useState("");
+  const [dietary, setDietary] = useState<DietaryConstraint[]>([]);
+  const [accessibility, setAccessibility] = useState<AccessibilityConstraint[]>([]);
+  const [kidFriendly, setKidFriendly] = useState(false);
+  const [customNotes, setCustomNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Close on Escape key
@@ -45,6 +71,18 @@ export function EventIntakeModal({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const toggleDietary = (item: DietaryConstraint) => {
+    setDietary((prev) =>
+      prev.includes(item) ? prev.filter((d) => d !== item) : [...prev, item],
+    );
+  };
+
+  const toggleAccessibility = (item: AccessibilityConstraint) => {
+    setAccessibility((prev) =>
+      prev.includes(item) ? prev.filter((a) => a !== item) : [...prev, item],
+    );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,8 +120,12 @@ export function EventIntakeModal({
       totalBudget: parsedBudget,
       location: location.trim(),
       theme: theme.trim() || undefined,
-      dietaryPreferences: [],
-      specialNotes: specialNotes.trim() || undefined
+      constraints: {
+        dietary,
+        accessibility,
+        kidFriendly,
+        customNotes: customNotes.trim() || undefined,
+      },
     });
   };
 
@@ -102,7 +144,7 @@ export function EventIntakeModal({
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
-        padding: "1rem"
+        padding: "1rem",
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -116,12 +158,12 @@ export function EventIntakeModal({
         className="glass-panel"
         style={{
           width: "100%",
-          maxWidth: "600px",
+          maxWidth: "640px",
           maxHeight: "90vh",
           overflowY: "auto",
           background: "#161c2d",
           border: "1px solid var(--border-highlight)",
-          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.6)"
+          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.6)",
         }}
       >
         <div
@@ -131,7 +173,7 @@ export function EventIntakeModal({
             alignItems: "center",
             marginBottom: "1.25rem",
             borderBottom: "1px solid var(--border-subtle)",
-            paddingBottom: "0.75rem"
+            paddingBottom: "0.75rem",
           }}
         >
           <h2 id="intake-dialog-title" style={{ fontSize: "1.25rem", fontWeight: "700" }}>
@@ -157,7 +199,7 @@ export function EventIntakeModal({
               color: "var(--status-error-text)",
               borderRadius: "6px",
               marginBottom: "1rem",
-              fontSize: "0.875rem"
+              fontSize: "0.875rem",
             }}
           >
             ⚠️ {errorMsg}
@@ -200,7 +242,7 @@ export function EventIntakeModal({
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
-              gap: "1rem"
+              gap: "1rem",
             }}
           >
             <div className="form-group">
@@ -238,7 +280,7 @@ export function EventIntakeModal({
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
-              gap: "1rem"
+              gap: "1rem",
             }}
           >
             <div className="form-group">
@@ -287,16 +329,135 @@ export function EventIntakeModal({
             />
           </div>
 
+          {/* Dietary Constraints Multi-Select */}
+          <div className="form-group">
+            <span className="form-label">Dietary Accommodations</span>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.5rem",
+                marginTop: "0.25rem",
+              }}
+              role="group"
+              aria-label="Dietary constraints"
+            >
+              {DIETARY_OPTIONS.map((opt) => {
+                const isSelected = dietary.includes(opt.id);
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => toggleDietary(opt.id)}
+                    aria-pressed={isSelected}
+                    style={{
+                      padding: "0.35rem 0.75rem",
+                      fontSize: "0.8rem",
+                      borderRadius: "6px",
+                      border: "1px solid",
+                      borderColor: isSelected
+                        ? "var(--accent-purple)"
+                        : "var(--border-subtle)",
+                      background: isSelected
+                        ? "var(--accent-purple-glow)"
+                        : "rgba(255, 255, 255, 0.04)",
+                      color: isSelected ? "#ffffff" : "var(--text-secondary)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Accessibility Accommodations */}
+          <div className="form-group">
+            <span className="form-label">Accessibility Accommodations</span>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.5rem",
+                marginTop: "0.25rem",
+              }}
+              role="group"
+              aria-label="Accessibility options"
+            >
+              {ACCESSIBILITY_OPTIONS.map((opt) => {
+                const isSelected = accessibility.includes(opt.id);
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => toggleAccessibility(opt.id)}
+                    aria-pressed={isSelected}
+                    style={{
+                      padding: "0.35rem 0.75rem",
+                      fontSize: "0.8rem",
+                      borderRadius: "6px",
+                      border: "1px solid",
+                      borderColor: isSelected
+                        ? "var(--accent-cyan)"
+                        : "var(--border-subtle)",
+                      background: isSelected
+                        ? "rgba(6, 182, 212, 0.15)"
+                        : "rgba(255, 255, 255, 0.04)",
+                      color: isSelected ? "#ffffff" : "var(--text-secondary)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Kid Friendly Toggle */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              margin: "1rem 0",
+            }}
+          >
+            <input
+              id="intake-kid-friendly"
+              type="checkbox"
+              checked={kidFriendly}
+              onChange={(e) => setKidFriendly(e.target.checked)}
+              style={{
+                width: "18px",
+                height: "18px",
+                cursor: "pointer",
+                accentColor: "var(--accent-purple)",
+              }}
+            />
+            <label
+              htmlFor="intake-kid-friendly"
+              style={{
+                fontSize: "0.9rem",
+                color: "var(--text-primary)",
+                cursor: "pointer",
+              }}
+            >
+              👶 Family & Kid-Friendly (includes child activities & entertainment)
+            </label>
+          </div>
+
           <div className="form-group">
             <label htmlFor="intake-notes" className="form-label">
               Special Constraints or Notes (Optional)
             </label>
             <textarea
               id="intake-notes"
-              rows={3}
-              placeholder="e.g. Need outdoor backup plan, vegan catering options"
-              value={specialNotes}
-              onChange={(e) => setSpecialNotes(e.target.value)}
+              rows={2}
+              placeholder="e.g. Need outdoor backup plan, separate allergen prep"
+              value={customNotes}
+              onChange={(e) => setCustomNotes(e.target.value)}
               className="form-textarea"
             />
           </div>
@@ -306,7 +467,7 @@ export function EventIntakeModal({
               display: "flex",
               justifyContent: "flex-end",
               gap: "0.75rem",
-              marginTop: "1.5rem"
+              marginTop: "1.5rem",
             }}
           >
             <button

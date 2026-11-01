@@ -3,7 +3,7 @@ import {
   generateVendorChecklist,
   updateVendorStatus,
   updateVendorDetails,
-  getVendorChecklistSummary
+  getVendorChecklistSummary,
 } from "./manager";
 import { VendorChecklistItem } from "./types";
 
@@ -35,8 +35,8 @@ describe("Vendor Manager Domain Functions", () => {
         estimatedCost: 4000,
         contactInfo: "gourmet@example.com",
         contractSigned: false,
-        notes: ""
-      }
+        notes: "",
+      },
     ];
 
     it("updates status immutably", () => {
@@ -50,7 +50,7 @@ describe("Vendor Manager Domain Functions", () => {
         id: "v-1",
         vendorName: "Artisan Kitchen",
         estimatedCost: 4500,
-        contractSigned: true
+        contractSigned: true,
       });
 
       expect(updated[0].vendorName).toBe("Artisan Kitchen");
@@ -71,7 +71,7 @@ describe("Vendor Manager Domain Functions", () => {
           estimatedCost: 5000,
           contactInfo: "",
           contractSigned: true,
-          notes: ""
+          notes: "",
         },
         {
           id: "2",
@@ -82,8 +82,8 @@ describe("Vendor Manager Domain Functions", () => {
           estimatedCost: 2000,
           contactInfo: "",
           contractSigned: false,
-          notes: ""
-        }
+          notes: "",
+        },
       ];
 
       const summary = getVendorChecklistSummary(items);

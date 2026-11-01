@@ -3,7 +3,7 @@ import {
   VendorCategory,
   VendorChecklistItem,
   VendorStatus,
-  VendorSummary
+  VendorSummary,
 } from "./types";
 
 interface VendorTemplate {
@@ -19,7 +19,7 @@ const WEDDING_VENDOR_TEMPLATES: readonly VendorTemplate[] = [
   { category: "decor", title: "Florist & Event Designer" },
   { category: "attire", title: "Bridal Gown & Groom Suit Tailoring" },
   { category: "cake", title: "Wedding Cake & Dessert Baker" },
-  { category: "other", title: "Hair & Makeup Artist" }
+  { category: "other", title: "Hair & Makeup Artist" },
 ];
 
 const BIRTHDAY_VENDOR_TEMPLATES: readonly VendorTemplate[] = [
@@ -28,16 +28,19 @@ const BIRTHDAY_VENDOR_TEMPLATES: readonly VendorTemplate[] = [
   { category: "cake", title: "Custom Birthday Cake Bakery" },
   { category: "entertainment", title: "Entertainer (DJ, Magician, or Face Painter)" },
   { category: "decor", title: "Balloon & Banner Stylist" },
-  { category: "photography", title: "Event Photographer" }
+  { category: "photography", title: "Event Photographer" },
 ];
 
 const COMMUNITY_VENDOR_TEMPLATES: readonly VendorTemplate[] = [
-  { category: "permits_insurance", title: "Municipal Parks Department & Insurance Carrier" },
+  {
+    category: "permits_insurance",
+    title: "Municipal Parks Department & Insurance Carrier",
+  },
   { category: "entertainment", title: "Audio / Visual Equipment & Sound Technician" },
   { category: "catering", title: "Food Truck Operators & Refreshment Providers" },
   { category: "venue", title: "Canopy, Table & Chair Rental Supplier" },
   { category: "other", title: "Portable Restrooms & Sanitation Services" },
-  { category: "other", title: "First Aid & Event Security Personnel" }
+  { category: "other", title: "First Aid & Event Security Personnel" },
 ];
 
 /**
@@ -63,7 +66,7 @@ export function generateVendorChecklist(eventType: EventType): VendorChecklistIt
     estimatedCost: 0,
     contactInfo: "",
     contractSigned: false,
-    notes: ""
+    notes: "",
   }));
 }
 
@@ -78,10 +81,10 @@ export function generateVendorChecklist(eventType: EventType): VendorChecklistIt
 export function updateVendorStatus(
   checklist: readonly VendorChecklistItem[],
   id: string,
-  newStatus: VendorStatus
+  newStatus: VendorStatus,
 ): VendorChecklistItem[] {
   return checklist.map((item) =>
-    item.id === id ? { ...item, status: newStatus } : item
+    item.id === id ? { ...item, status: newStatus } : item,
   );
 }
 
@@ -94,13 +97,13 @@ export function updateVendorStatus(
  */
 export function updateVendorDetails(
   checklist: readonly VendorChecklistItem[],
-  update: Partial<VendorChecklistItem> & { id: string }
+  update: Partial<VendorChecklistItem> & { id: string },
 ): VendorChecklistItem[] {
   return checklist.map((item) => {
     if (item.id !== update.id) return item;
     return {
       ...item,
-      ...update
+      ...update,
     };
   });
 }
@@ -112,7 +115,7 @@ export function updateVendorDetails(
  * @returns Consolidated VendorSummary metrics.
  */
 export function getVendorChecklistSummary(
-  checklist: readonly VendorChecklistItem[]
+  checklist: readonly VendorChecklistItem[],
 ): VendorSummary {
   const totalVendors = checklist.length;
   const bookedCount = checklist.filter((item) => item.status === "booked").length;
@@ -129,6 +132,6 @@ export function getVendorChecklistSummary(
     bookedCount,
     pendingCount,
     totalCommittedCost: Math.round(totalCommittedCost * 100) / 100,
-    allContractsSigned
+    allContractsSigned,
   };
 }

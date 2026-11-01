@@ -12,7 +12,7 @@ describe("NavigationTabs Component", () => {
         budgetItemCount={6}
         milestoneCount={7}
         vendorCount={8}
-      />
+      />,
     );
 
     expect(screen.getByRole("tab", { name: /GenAI Blueprint/i })).toBeInTheDocument();
@@ -23,12 +23,7 @@ describe("NavigationTabs Component", () => {
 
   it("calls onTabChange when a tab is clicked", () => {
     const handleTabChange = vi.fn();
-    render(
-      <NavigationTabs
-        activeTab="ai_plan"
-        onTabChange={handleTabChange}
-      />
-    );
+    render(<NavigationTabs activeTab="ai_plan" onTabChange={handleTabChange} />);
 
     const budgetTab = screen.getByRole("tab", { name: /Budget Tracker/i });
     fireEvent.click(budgetTab);
@@ -36,12 +31,7 @@ describe("NavigationTabs Component", () => {
   });
 
   it("correctly indicates the selected tab with aria-selected", () => {
-    render(
-      <NavigationTabs
-        activeTab="budget"
-        onTabChange={vi.fn()}
-      />
-    );
+    render(<NavigationTabs activeTab="budget" onTabChange={vi.fn()} />);
 
     const budgetTab = screen.getByRole("tab", { name: /Budget Tracker/i });
     expect(budgetTab).toHaveAttribute("aria-selected", "true");

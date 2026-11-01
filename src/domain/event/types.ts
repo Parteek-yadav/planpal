@@ -7,6 +7,47 @@ export const EventTypeSchema = z.enum(["wedding", "birthday", "community"]);
 export type EventType = z.infer<typeof EventTypeSchema>;
 
 /**
+ * Dietary constraints supported by event catering modules.
+ */
+export const DietaryConstraintSchema = z.enum([
+  "vegan",
+  "vegetarian",
+  "gluten_free",
+  "nut_free",
+  "halal",
+  "kosher",
+  "dairy_free",
+]);
+export type DietaryConstraint = z.infer<typeof DietaryConstraintSchema>;
+
+/**
+ * Accessibility accommodation options for venues and ceremonies.
+ */
+export const AccessibilityConstraintSchema = z.enum([
+  "wheelchair_accessible",
+  "asl_interpreter",
+  "captioning",
+  "quiet_space",
+  "service_animal_friendly",
+]);
+export type AccessibilityConstraint = z.infer<typeof AccessibilityConstraintSchema>;
+
+/**
+ * Comprehensive constraints schema for dietary, accessibility, and family needs.
+ */
+export const ConstraintsSchema = z.object({
+  dietary: z.array(DietaryConstraintSchema).default([]),
+  accessibility: z.array(AccessibilityConstraintSchema).default([]),
+  kidFriendly: z.boolean().default(false),
+  customNotes: z
+    .string()
+    .trim()
+    .max(300, "Notes cannot exceed 300 characters")
+    .optional(),
+});
+export type Constraints = z.infer<typeof ConstraintsSchema>;
+
+/**
  * Zod schema for validating user event intake input.
  * Strips unexpected fields and enforces strict boundaries.
  */
@@ -17,9 +58,7 @@ export const EventPlanInputSchema = z.object({
     .min(2, "Title must be at least 2 characters long")
     .max(100, "Title cannot exceed 100 characters"),
   eventType: EventTypeSchema,
-  date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
   guestCount: z
     .number()
     .int("Guest count must be an integer")
@@ -34,13 +73,12 @@ export const EventPlanInputSchema = z.object({
     .trim()
     .min(2, "Location must be at least 2 characters")
     .max(120, "Location cannot exceed 120 characters"),
-  theme: z.string().trim().max(100, "Theme cannot exceed 100 characters").optional(),
-  dietaryPreferences: z.array(z.string().trim().max(50)).default([]),
-  specialNotes: z
-    .string()
-    .trim()
-    .max(500, "Special notes cannot exceed 500 characters")
-    .optional()
+  theme: z.string().trim().max(80, "Theme cannot exceed 80 characters").optional(),
+  constraints: ConstraintsSchema.default({
+    dietary: [],
+    accessibility: [],
+    kidFriendly: false,
+  }),
 });
 
 export type EventPlanInput = z.infer<typeof EventPlanInputSchema>;
@@ -51,7 +89,7 @@ export type EventPlanInput = z.infer<typeof EventPlanInputSchema>;
 export const EventPlanSchema = EventPlanInputSchema.extend({
   id: z.string().min(1),
   createdAt: z.string(),
-  updatedAt: z.string()
+  updatedAt: z.string(),
 });
 
 export type EventPlan = z.infer<typeof EventPlanSchema>;

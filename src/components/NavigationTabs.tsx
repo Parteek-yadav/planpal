@@ -25,7 +25,7 @@ export function NavigationTabs({
   onTabChange,
   budgetItemCount,
   milestoneCount,
-  vendorCount
+  vendorCount,
 }: NavigationTabsProps): React.JSX.Element {
   const tabListRef = useRef<HTMLDivElement>(null);
 
@@ -33,26 +33,26 @@ export function NavigationTabs({
     {
       key: "ai_plan",
       label: "GenAI Blueprint & Ideas",
-      icon: "✨"
+      icon: "✨",
     },
     {
       key: "budget",
       label: "Smart Budget Tracker",
       icon: "💰",
-      badge: budgetItemCount
+      badge: budgetItemCount,
     },
     {
       key: "timeline",
       label: "Milestones & Run-of-Show",
       icon: "⏱️",
-      badge: milestoneCount
+      badge: milestoneCount,
     },
     {
       key: "vendors",
       label: "Vendor Procurement",
       icon: "📋",
-      badge: vendorCount
-    }
+      badge: vendorCount,
+    },
   ];
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -71,7 +71,8 @@ export function NavigationTabs({
       e.preventDefault();
       const targetTab = tabs[newIndex];
       onTabChange(targetTab.key);
-      const buttons = tabListRef.current?.querySelectorAll<HTMLButtonElement>("button[role='tab']");
+      const buttons =
+        tabListRef.current?.querySelectorAll<HTMLButtonElement>("button[role='tab']");
       buttons?.[newIndex]?.focus();
     }
   };
@@ -107,8 +108,10 @@ export function NavigationTabs({
                     fontSize: "0.75rem",
                     padding: "0.15rem 0.45rem",
                     borderRadius: "9999px",
-                    background: isSelected ? "var(--accent-purple)" : "rgba(255, 255, 255, 0.1)",
-                    color: "#ffffff"
+                    background: isSelected
+                      ? "var(--accent-purple)"
+                      : "rgba(255, 255, 255, 0.1)",
+                    color: "#ffffff",
                   }}
                 >
                   {tab.badge}

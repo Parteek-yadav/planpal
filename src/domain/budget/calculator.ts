@@ -18,7 +18,7 @@ const WEDDING_ALLOCATIONS: readonly AllocationRule[] = [
   { category: "music_entertainment", name: "DJ / Live Music & Sound", ratio: 0.1 },
   { category: "decor_floral", name: "Floral Arrangements & Decor", ratio: 0.1 },
   { category: "contingency", name: "Contingency / Emergency Reserve", ratio: 0.1 },
-  { category: "other", name: "Stationery, Favors & Officiant", ratio: 0.03 }
+  { category: "other", name: "Stationery, Favors & Officiant", ratio: 0.03 },
 ];
 
 const BIRTHDAY_ALLOCATIONS: readonly AllocationRule[] = [
@@ -27,15 +27,19 @@ const BIRTHDAY_ALLOCATIONS: readonly AllocationRule[] = [
   { category: "decor_floral", name: "Theme Decor & Party Favors", ratio: 0.12 },
   { category: "cake_dessert", name: "Custom Cake & Dessert Bar", ratio: 0.1 },
   { category: "photography_video", name: "Event Photography", ratio: 0.05 },
-  { category: "contingency", name: "Contingency Reserve", ratio: 0.05 }
+  { category: "contingency", name: "Contingency Reserve", ratio: 0.05 },
 ];
 
 const COMMUNITY_ALLOCATIONS: readonly AllocationRule[] = [
-  { category: "permits_insurance", name: "Park / Venue Permits & Insurance", ratio: 0.35 },
+  {
+    category: "permits_insurance",
+    name: "Park / Venue Permits & Insurance",
+    ratio: 0.35,
+  },
   { category: "venue_catering", name: "Community Refreshments & Water", ratio: 0.25 },
   { category: "music_entertainment", name: "Audio System & Performers", ratio: 0.2 },
   { category: "marketing_supplies", name: "Signage, Banners & Flyers", ratio: 0.1 },
-  { category: "contingency", name: "Contingency Reserve", ratio: 0.1 }
+  { category: "contingency", name: "Contingency Reserve", ratio: 0.1 },
 ];
 
 /**
@@ -47,7 +51,7 @@ const COMMUNITY_ALLOCATIONS: readonly AllocationRule[] = [
  */
 export function calculateDefaultBudgetAllocation(
   eventType: EventType,
-  totalBudget: number
+  totalBudget: number,
 ): BudgetItem[] {
   const rules =
     eventType === "wedding"
@@ -65,7 +69,7 @@ export function calculateDefaultBudgetAllocation(
       allocatedAmount: allocated,
       actualAmount: 0,
       isPaid: false,
-      notes: ""
+      notes: "",
     };
   });
 }
@@ -79,7 +83,7 @@ export function calculateDefaultBudgetAllocation(
  */
 export function summarizeBudget(
   totalBudget: number,
-  items: readonly BudgetItem[]
+  items: readonly BudgetItem[],
 ): BudgetSummary {
   const totalAllocated = items.reduce((sum, item) => sum + item.allocatedAmount, 0);
   const totalSpent = items.reduce((sum, item) => sum + item.actualAmount, 0);
@@ -99,7 +103,7 @@ export function summarizeBudget(
     remainingBudget,
     unallocatedBudget,
     isOverBudget,
-    variancePercentage
+    variancePercentage,
   };
 }
 
@@ -112,7 +116,7 @@ export function summarizeBudget(
  */
 export function updateBudgetItem(
   items: readonly BudgetItem[],
-  update: BudgetItemUpdate
+  update: BudgetItemUpdate,
 ): BudgetItem[] {
   return items.map((item) => {
     if (item.id !== update.id) return item;
@@ -120,9 +124,11 @@ export function updateBudgetItem(
       ...item,
       ...update,
       allocatedAmount:
-        update.allocatedAmount !== undefined ? update.allocatedAmount : item.allocatedAmount,
+        update.allocatedAmount !== undefined
+          ? update.allocatedAmount
+          : item.allocatedAmount,
       actualAmount:
-        update.actualAmount !== undefined ? update.actualAmount : item.actualAmount
+        update.actualAmount !== undefined ? update.actualAmount : item.actualAmount,
     };
   });
 }
@@ -134,7 +140,7 @@ export function updateBudgetItem(
  * @returns Record of category totals.
  */
 export function calculateCategorySubtotals(
-  items: readonly BudgetItem[]
+  items: readonly BudgetItem[],
 ): Record<BudgetCategory, { allocated: number; spent: number }> {
   const result: Record<BudgetCategory, { allocated: number; spent: number }> = {
     venue_catering: { allocated: 0, spent: 0 },
@@ -146,7 +152,7 @@ export function calculateCategorySubtotals(
     permits_insurance: { allocated: 0, spent: 0 },
     marketing_supplies: { allocated: 0, spent: 0 },
     contingency: { allocated: 0, spent: 0 },
-    other: { allocated: 0, spent: 0 }
+    other: { allocated: 0, spent: 0 },
   };
 
   for (const item of items) {

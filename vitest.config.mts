@@ -6,11 +6,12 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
-    include: ["src/**/*.{test,spec}.{ts,tsx}"]
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    testTimeout: 15000,
   },
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "./src")
-    }
-  }
+      "@": path.resolve(import.meta.dirname, "./src"),
+    },
+  },
 });

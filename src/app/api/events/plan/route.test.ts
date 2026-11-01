@@ -12,13 +12,17 @@ describe("POST /api/events/plan Route Handler", () => {
       totalBudget: 45000,
       location: "Meadowood Valley",
       theme: "Classic Ivory & Gold",
-      dietaryPreferences: ["Gluten-Free", "Halal"]
+      constraints: {
+        dietary: ["gluten_free", "halal"],
+        accessibility: [],
+        kidFriendly: false,
+      },
     };
 
     const req = new NextRequest("http://localhost:3000/api/events/plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     const res = await POST(req);
@@ -45,20 +49,21 @@ describe("POST /api/events/plan Route Handler", () => {
   it("returns 400 Bad Request when required fields are missing", async () => {
     const invalidPayload = {
       title: "",
-      eventType: "wedding"
+      eventType: "wedding",
     };
 
     const req = new NextRequest("http://localhost:3000/api/events/plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(invalidPayload)
+      body: JSON.stringify(invalidPayload),
     });
 
     const res = await POST(req);
     expect(res.status).toBe(400);
 
-    const body = (await res.json()) as { error: string; issues: unknown[] };
-    expect(body.error).toBe("Validation failed");
-    expect(body.issues.length).toBeGreaterThan(0);
+    const body = (await res.json()) as { error: { code: string; message: string; details?: unknown[] } };
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.message).toBe("Request body validation failed");
+    expect(body.error.details).toBeDefined();
   });
 });

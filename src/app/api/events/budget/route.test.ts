@@ -13,7 +13,7 @@ describe("POST /api/events/budget Route Handler", () => {
           name: "Reception Hall",
           allocatedAmount: 10000,
           actualAmount: 9500,
-          isPaid: true
+          isPaid: true,
         },
         {
           id: "item-2",
@@ -21,15 +21,15 @@ describe("POST /api/events/budget Route Handler", () => {
           name: "Flowers",
           allocatedAmount: 2000,
           actualAmount: 2200,
-          isPaid: false
-        }
-      ]
+          isPaid: false,
+        },
+      ],
     };
 
     const req = new NextRequest("http://localhost:3000/api/events/budget", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     const res = await POST(req);
@@ -49,19 +49,20 @@ describe("POST /api/events/budget Route Handler", () => {
   it("returns 400 Bad Request for negative budget values", async () => {
     const invalidPayload = {
       totalBudget: -500,
-      items: []
+      items: [],
     };
 
     const req = new NextRequest("http://localhost:3000/api/events/budget", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(invalidPayload)
+      body: JSON.stringify(invalidPayload),
     });
 
     const res = await POST(req);
     expect(res.status).toBe(400);
 
-    const data = (await res.json()) as { error: string };
-    expect(data.error).toBe("Validation failed");
+    const data = (await res.json()) as { error: { code: string; message: string } };
+    expect(data.error.code).toBe("VALIDATION_ERROR");
+    expect(data.error.message).toBe("Request body validation failed");
   });
 });

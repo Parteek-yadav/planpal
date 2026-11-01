@@ -4,7 +4,7 @@ import {
   generateMilestones,
   generateDefaultRunOfShow,
   toggleMilestoneStatus,
-  calculatePlanningProgress
+  calculatePlanningProgress,
 } from "./scheduler";
 import { TimelineMilestone } from "./types";
 
@@ -68,7 +68,7 @@ describe("Timeline Scheduler Domain Functions", () => {
         targetDaysBeforeEvent: 30,
         targetDate: "2027-05-01",
         isCompleted: false,
-        priority: "high"
+        priority: "high",
       },
       {
         id: "m-2",
@@ -78,8 +78,8 @@ describe("Timeline Scheduler Domain Functions", () => {
         targetDaysBeforeEvent: 20,
         targetDate: "2027-05-11",
         isCompleted: false,
-        priority: "medium"
-      }
+        priority: "medium",
+      },
     ];
 
     it("calculates 0% progress initially", () => {

@@ -12,7 +12,7 @@ export const VendorCategorySchema = z.enum([
   "attire",
   "cake",
   "permits_insurance",
-  "other"
+  "other",
 ]);
 export type VendorCategory = z.infer<typeof VendorCategorySchema>;
 
@@ -24,7 +24,7 @@ export const VendorStatusSchema = z.enum([
   "contacted",
   "proposal_received",
   "booked",
-  "declined"
+  "declined",
 ]);
 export type VendorStatus = z.infer<typeof VendorStatusSchema>;
 
@@ -40,7 +40,7 @@ export const VendorChecklistItemSchema = z.object({
   estimatedCost: z.number().nonnegative().default(0),
   contactInfo: z.string().trim().max(150).default(""),
   contractSigned: z.boolean().default(false),
-  notes: z.string().trim().max(300).default("")
+  notes: z.string().trim().max(300).default(""),
 });
 
 export type VendorChecklistItem = z.infer<typeof VendorChecklistItemSchema>;
@@ -53,7 +53,7 @@ export const VendorSummarySchema = z.object({
   bookedCount: z.number().int().nonnegative(),
   pendingCount: z.number().int().nonnegative(),
   totalCommittedCost: z.number().nonnegative(),
-  allContractsSigned: z.boolean()
+  allContractsSigned: z.boolean(),
 });
 
 export type VendorSummary = z.infer<typeof VendorSummarySchema>;

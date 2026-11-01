@@ -8,7 +8,7 @@ export const TimelinePhaseSchema = z.enum([
   "vendor_booking",
   "detailed_coordination",
   "final_countdown",
-  "day_of"
+  "day_of",
 ]);
 export type TimelinePhase = z.infer<typeof TimelinePhaseSchema>;
 
@@ -29,7 +29,7 @@ export const TimelineMilestoneSchema = z.object({
   targetDaysBeforeEvent: z.number().int().nonnegative(),
   targetDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   isCompleted: z.boolean().default(false),
-  priority: MilestonePrioritySchema
+  priority: MilestonePrioritySchema,
 });
 
 export type TimelineMilestone = z.infer<typeof TimelineMilestoneSchema>;
@@ -39,12 +39,14 @@ export type TimelineMilestone = z.infer<typeof TimelineMilestoneSchema>;
  */
 export const RunOfShowItemSchema = z.object({
   id: z.string().min(1),
-  time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Time must be HH:MM format"),
+  time: z
+    .string()
+    .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Time must be HH:MM format"),
   activity: z.string().trim().min(1).max(150),
   leadPerson: z.string().trim().max(80),
   location: z.string().trim().max(100),
   isCompleted: z.boolean().default(false),
-  notes: z.string().trim().max(250).optional()
+  notes: z.string().trim().max(250).optional(),
 });
 
 export type RunOfShowItem = z.infer<typeof RunOfShowItemSchema>;

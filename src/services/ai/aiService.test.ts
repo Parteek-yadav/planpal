@@ -1,9 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { generateEventPlanSuggestions } from "./aiService";
+import { generateEventPlanSuggestions, generatePersonalizedIdeas } from "./aiService";
 import { AiPlanSuggestionSchema } from "./types";
+import { PersonalizedIdeasSchema } from "@/domain/ideas/types";
 
 describe("AI Event Planning Service", () => {
-  it("generates validated suggestions for a wedding", async () => {
+  it("generates validated suggestions for a wedding with constraints", async () => {
     const weddingRequest = {
       eventType: "wedding" as const,
       title: "Liam & Emma's Wedding",
@@ -12,8 +13,11 @@ describe("AI Event Planning Service", () => {
       totalBudget: 40000,
       location: "Carmel Valley Estate",
       theme: "Coastal Vineyard",
-      dietaryPreferences: ["Vegan", "Nut-Free"],
-      specialNotes: "Live jazz quartet for cocktail hour."
+      constraints: {
+        dietary: ["vegan" as const, "nut_free" as const],
+        accessibility: ["wheelchair_accessible" as const],
+        kidFriendly: false,
+      },
     };
 
     const suggestions = await generateEventPlanSuggestions(weddingRequest);
@@ -25,42 +29,34 @@ describe("AI Event Planning Service", () => {
     expect(suggestions.overview).toContain("wedding");
     expect(suggestions.themeIdeas.length).toBeGreaterThanOrEqual(2);
     expect(suggestions.themeIdeas[0].colorPalette.length).toBeGreaterThanOrEqual(3);
-    expect(suggestions.customTimelineTips.length).toBeGreaterThanOrEqual(2);
-    expect(suggestions.budgetOptimizationTips.length).toBeGreaterThanOrEqual(2);
-    expect(suggestions.contingencyPlan.riskScenario).toBeDefined();
+    expect(suggestions.activities.length).toBeGreaterThanOrEqual(2);
+    expect(suggestions.menus.length).toBeGreaterThanOrEqual(2);
+    expect(suggestions.decorations.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("generates validated suggestions for a birthday celebration", async () => {
-    const birthdayRequest = {
+  it("generates validated personalized ideas object", async () => {
+    const request = {
       eventType: "birthday" as const,
       title: "Maya's 30th Birthday Bash",
       date: "2027-04-20",
       guestCount: 40,
       totalBudget: 3500,
       location: "Skyline Rooftop Lounge",
-      theme: "Glow in the Dark"
+      theme: "Glow in the Dark",
+      constraints: {
+        dietary: [],
+        accessibility: [],
+        kidFriendly: true,
+      },
     };
 
-    const suggestions = await generateEventPlanSuggestions(birthdayRequest);
-    expect(suggestions.overview).toContain("birthday");
-    expect(suggestions.themeIdeas[0].title).toBe("Glow in the Dark");
-  });
-
-  it("generates validated suggestions for a community festival", async () => {
-    const communityRequest = {
-      eventType: "community" as const,
-      title: "Maplewood Spring Festival",
-      date: "2027-05-22",
-      guestCount: 500,
-      totalBudget: 15000,
-      location: "Central Town Park"
-    };
-
-    const suggestions = await generateEventPlanSuggestions(communityRequest);
-    expect(suggestions.overview).toContain("community");
-    expect(suggestions.budgetOptimizationTips.some((t) => t.category.includes("Equipment"))).toBe(
-      true
-    );
+    const ideas = await generatePersonalizedIdeas(request);
+    const parseResult = PersonalizedIdeasSchema.safeParse(ideas);
+    expect(parseResult.success).toBe(true);
+    expect(ideas.themes.length).toBeGreaterThanOrEqual(2);
+    expect(ideas.activities.length).toBeGreaterThanOrEqual(2);
+    expect(ideas.menus.length).toBeGreaterThanOrEqual(2);
+    expect(ideas.decorations.length).toBeGreaterThanOrEqual(2);
   });
 
   it("redacts PII from prompt inputs before generating suggestions", async () => {
@@ -70,7 +66,12 @@ describe("AI Event Planning Service", () => {
       date: "2027-05-10",
       guestCount: 25,
       totalBudget: 1200,
-      location: "Call 555-432-1098 for entrance code"
+      location: "Call 555-432-1098 for entrance code",
+      constraints: {
+        dietary: [],
+        accessibility: [],
+        kidFriendly: false,
+      },
     };
 
     const suggestions = await generateEventPlanSuggestions(piiRequest);
@@ -85,7 +86,7 @@ describe("AI Event Planning Service", () => {
       date: "bad-date",
       guestCount: -5,
       totalBudget: -100,
-      location: ""
+      location: "",
     };
 
     await expect(generateEventPlanSuggestions(invalidRequest)).rejects.toThrow();

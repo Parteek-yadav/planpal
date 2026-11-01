@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z, ZodError } from "zod";
-import {
-  BudgetItemSchema,
-  summarizeBudget,
-  calculateCategorySubtotals
-} from "@/domain";
+import { z } from "zod";
+import { BudgetItemSchema, summarizeBudget, calculateCategorySubtotals } from "@/domain";
+import { parseAndValidateRequest, mapServiceErrorToResponse } from "../../routeUtils";
 
-const RecalculateBudgetRequestSchema = z.object({
-  totalBudget: z.number().nonnegative("Total budget must be non-negative"),
-  items: z.array(BudgetItemSchema)
-});
+const RecalculateBudgetRequestSchema = z
+  .object({
+    totalBudget: z.number().nonnegative("Total budget must be non-negative"),
+    items: z.array(BudgetItemSchema),
+  })
+  .strict();
 
 /**
  * Thin route handler for budget calculations and variance analytics.
@@ -19,31 +18,30 @@ const RecalculateBudgetRequestSchema = z.object({
  * @returns NextResponse with computed summary and category breakdowns.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    const rawBody: unknown = await request.json();
-    const { totalBudget, items } = RecalculateBudgetRequestSchema.parse(rawBody);
+  const validation = await parseAndValidateRequest(
+    request,
+    RecalculateBudgetRequestSchema,
+  );
+  if (!validation.ok) {
+    return validation.response;
+  }
 
+  try {
+    const { totalBudget, items } = validation.data;
     const summary = summarizeBudget(totalBudget, items);
     const categorySubtotals = calculateCategorySubtotals(items);
 
-    return NextResponse.json({ summary, categorySubtotals }, { status: 200 });
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          error: "Validation failed",
-          issues: error.issues.map((i) => ({
-            field: i.path.join("."),
-            message: i.message
-          }))
-        },
-        { status: 400 }
-      );
-    }
-
     return NextResponse.json(
-      { error: "Failed to recalculate budget metrics" },
-      { status: 500 }
+      { summary, categorySubtotals },
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "private, no-cache",
+        },
+      },
     );
+  } catch (error) {
+    return mapServiceErrorToResponse(error);
   }
 }

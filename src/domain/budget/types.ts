@@ -13,7 +13,7 @@ export const BudgetCategorySchema = z.enum([
   "permits_insurance",
   "marketing_supplies",
   "contingency",
-  "other"
+  "other",
 ]);
 export type BudgetCategory = z.infer<typeof BudgetCategorySchema>;
 
@@ -27,7 +27,7 @@ export const BudgetItemSchema = z.object({
   allocatedAmount: z.number().nonnegative("Allocated amount cannot be negative"),
   actualAmount: z.number().nonnegative("Actual amount cannot be negative"),
   isPaid: z.boolean().default(false),
-  notes: z.string().trim().max(300).optional()
+  notes: z.string().trim().max(300).optional(),
 });
 
 export type BudgetItem = z.infer<typeof BudgetItemSchema>;
@@ -42,7 +42,7 @@ export const BudgetSummarySchema = z.object({
   remainingBudget: z.number(),
   unallocatedBudget: z.number(),
   isOverBudget: z.boolean(),
-  variancePercentage: z.number()
+  variancePercentage: z.number(),
 });
 
 export type BudgetSummary = z.infer<typeof BudgetSummarySchema>;
@@ -51,6 +51,6 @@ export type BudgetSummary = z.infer<typeof BudgetSummarySchema>;
  * Update payload for a single budget item.
  */
 export const BudgetItemUpdateSchema = BudgetItemSchema.partial().required({
-  id: true
+  id: true,
 });
 export type BudgetItemUpdate = z.infer<typeof BudgetItemUpdateSchema>;

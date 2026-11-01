@@ -14,8 +14,8 @@ describe("VendorChecklistView Component", () => {
       estimatedCost: 3000,
       contactInfo: "",
       contractSigned: false,
-      notes: ""
-    }
+      notes: "",
+    },
   ];
 
   it("renders vendor checklist item and updates status when changed", () => {
@@ -25,7 +25,7 @@ describe("VendorChecklistView Component", () => {
         checklist={mockVendors}
         onUpdateStatus={handleStatus}
         onUpdateDetails={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText("Caterer & Bar Service")).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe("VendorChecklistView Component", () => {
         checklist={mockVendors}
         onUpdateStatus={vi.fn()}
         onUpdateDetails={handleDetails}
-      />
+      />,
     );
 
     const contractCheckbox = screen.getByLabelText(/Contract Signed/i);

@@ -1,5 +1,10 @@
 import { EventType } from "../event/types";
-import { TimelineMilestone, RunOfShowItem, TimelinePhase, MilestonePriority } from "./types";
+import {
+  TimelineMilestone,
+  RunOfShowItem,
+  TimelinePhase,
+  MilestonePriority,
+} from "./types";
 
 interface MilestoneBlueprint {
   readonly phase: TimelinePhase;
@@ -15,50 +20,50 @@ const WEDDING_BLUEPRINTS: readonly MilestoneBlueprint[] = [
     title: "Finalize Guest Count & Set Budget Cap",
     description: "Align on non-negotiable elements and maximum financial ceiling.",
     daysBefore: 270,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "concept_budget",
     title: "Secure Ceremony & Reception Venues",
     description: "Sign venue agreement and reserve event dates.",
     daysBefore: 240,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "vendor_booking",
     title: "Book Photographer, Videographer & Catering",
     description: "Top creative vendors book out 9-12 months ahead.",
     daysBefore: 180,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "vendor_booking",
     title: "Select Wedding Attire & Bridal Party Outfits",
     description: "Order dress and suits allowing 4-6 months for alterations.",
     daysBefore: 150,
-    priority: "medium"
+    priority: "medium",
   },
   {
     phase: "detailed_coordination",
     title: "Send Formal Invitations & Track RSVPs",
     description: "Collect dietary requirements and seating preferences.",
     daysBefore: 60,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "final_countdown",
     title: "Finalize Seating Chart & Vendor Headcounts",
     description: "Deliver confirmed meal counts to catering manager.",
     daysBefore: 14,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "day_of",
     title: "Conduct Wedding Rehearsal & Distribute Day-Of Kits",
     description: "Walkthrough with wedding party and officiant.",
     daysBefore: 1,
-    priority: "medium"
-  }
+    priority: "medium",
+  },
 ];
 
 const BIRTHDAY_BLUEPRINTS: readonly MilestoneBlueprint[] = [
@@ -67,36 +72,36 @@ const BIRTHDAY_BLUEPRINTS: readonly MilestoneBlueprint[] = [
     title: "Choose Birthday Theme & Reserve Venue",
     description: "Lock in date, party theme, and party room or home setup.",
     daysBefore: 45,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "vendor_booking",
     title: "Book Entertainer / DJ & Order Custom Cake",
     description: "Arrange magician, face painter, or DJ plus bakery order.",
     daysBefore: 30,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "detailed_coordination",
     title: "Send Digital Invitations & Collect RSVPs",
     description: "Confirm head count for goodie bags and food ordering.",
     daysBefore: 21,
-    priority: "medium"
+    priority: "medium",
   },
   {
     phase: "final_countdown",
     title: "Purchase Decorations, Tableware & Favors",
     description: "Balloons, banners, tableware, and party favor bags.",
     daysBefore: 7,
-    priority: "medium"
+    priority: "medium",
   },
   {
     phase: "day_of",
     title: "Venue Setup & Cake Pickup",
     description: "Set up balloon arches, sound check, and position dessert table.",
     daysBefore: 0,
-    priority: "high"
-  }
+    priority: "high",
+  },
 ];
 
 const COMMUNITY_BLUEPRINTS: readonly MilestoneBlueprint[] = [
@@ -105,36 +110,36 @@ const COMMUNITY_BLUEPRINTS: readonly MilestoneBlueprint[] = [
     title: "Secure Municipal Permits & Facility Insurance",
     description: "Obtain city sound, park usage, and food assembly permits.",
     daysBefore: 90,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "vendor_booking",
     title: "Recruit Volunteer Leads & Book AV Equipment",
     description: "Confirm stage, microphones, generators, and volunteer captains.",
     daysBefore: 60,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "detailed_coordination",
     title: "Launch Public Promotion & Signage Printing",
     description: "Distribute community posters, social posts, and banners.",
     daysBefore: 30,
-    priority: "medium"
+    priority: "medium",
   },
   {
     phase: "final_countdown",
     title: "Conduct Volunteer Orientation & Safety Walkthrough",
     description: "Review first aid, emergency exits, and shift assignments.",
     daysBefore: 7,
-    priority: "high"
+    priority: "high",
   },
   {
     phase: "day_of",
     title: "Site Setup, Staging & Registration Check-In",
     description: "Erect canopies, establish info desk, test sound levels.",
     daysBefore: 0,
-    priority: "high"
-  }
+    priority: "high",
+  },
 ];
 
 /**
@@ -160,7 +165,7 @@ export function computeTargetCalendarDate(eventDate: string, daysBefore: number)
  */
 export function generateMilestones(
   eventType: EventType,
-  eventDate: string
+  eventDate: string,
 ): TimelineMilestone[] {
   const blueprints =
     eventType === "wedding"
@@ -177,7 +182,7 @@ export function generateMilestones(
     targetDaysBeforeEvent: bp.daysBefore,
     targetDate: computeTargetCalendarDate(eventDate, bp.daysBefore),
     isCompleted: false,
-    priority: bp.priority
+    priority: bp.priority,
   }));
 }
 
@@ -196,7 +201,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Hair, Makeup & Wedding Attire Prep",
         leadPerson: "Bridal Party Lead",
         location: "Bridal Suite",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-2",
@@ -204,7 +209,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "First Look & Couple Portraits",
         leadPerson: "Lead Photographer",
         location: "Garden Pavilion",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-3",
@@ -212,7 +217,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Guest Arrival & Welcome Refreshments",
         leadPerson: "Venue Host",
         location: "Foyer",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-4",
@@ -220,7 +225,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Ceremony Processional & Vows",
         leadPerson: "Officiant",
         location: "Main Sanctuary",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-5",
@@ -228,7 +233,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Cocktail Hour & Extended Family Photos",
         leadPerson: "Catering Lead",
         location: "Terrace Courtyard",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-6",
@@ -236,7 +241,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Grand Entrance & Plated Dinner",
         leadPerson: "DJ / MC",
         location: "Grand Ballroom",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-7",
@@ -244,7 +249,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Toasts, Cake Cutting & First Dance",
         leadPerson: "Maid of Honor & Best Man",
         location: "Ballroom Dance Floor",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-8",
@@ -252,8 +257,8 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Sparkler Send-Off & Teardown",
         leadPerson: "Event Coordinator",
         location: "Front Plaza",
-        isCompleted: false
-      }
+        isCompleted: false,
+      },
     ];
   }
 
@@ -265,7 +270,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Host Arrival, Balloon Arch & Decor Setup",
         leadPerson: "Party Host",
         location: "Main Party Room",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-2",
@@ -273,7 +278,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Guest Welcome & Free Play / Mingling",
         leadPerson: "Greeting Helper",
         location: "Entrance Area",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-3",
@@ -281,7 +286,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Organized Games & Entertainment Show",
         leadPerson: "Entertainer / Magician",
         location: "Central Activity Mat",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-4",
@@ -289,7 +294,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Happy Birthday Chorus & Cake Cutting",
         leadPerson: "Party Host",
         location: "Dessert Table",
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: "ros-5",
@@ -297,8 +302,8 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
         activity: "Party Favor Bags & Guest Farewell",
         leadPerson: "Host Helper",
         location: "Exit Hallway",
-        isCompleted: false
-      }
+        isCompleted: false,
+      },
     ];
   }
 
@@ -309,7 +314,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
       activity: "Site Load-In, Canopy Setup & Power Hookup",
       leadPerson: "Logistics Lead",
       location: "Community Park Grounds",
-      isCompleted: false
+      isCompleted: false,
     },
     {
       id: "ros-2",
@@ -317,7 +322,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
       activity: "Volunteer Briefing & First-Aid Check",
       leadPerson: "Volunteer Coordinator",
       location: "Information Tent",
-      isCompleted: false
+      isCompleted: false,
     },
     {
       id: "ros-3",
@@ -325,7 +330,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
       activity: "Official Welcome & Community Keynote",
       leadPerson: "Master of Ceremonies",
       location: "Main Stage",
-      isCompleted: false
+      isCompleted: false,
     },
     {
       id: "ros-4",
@@ -333,7 +338,7 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
       activity: "Food Truck Service & Community Activities",
       leadPerson: "Vendor Captain",
       location: "Food Pavilion",
-      isCompleted: false
+      isCompleted: false,
     },
     {
       id: "ros-5",
@@ -341,8 +346,8 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
       activity: "Closing Remarks & Volunteer Cleanup Sweep",
       leadPerson: "Event Director",
       location: "Entire Grounds",
-      isCompleted: false
-    }
+      isCompleted: false,
+    },
   ];
 }
 
@@ -355,10 +360,10 @@ export function generateDefaultRunOfShow(eventType: EventType): RunOfShowItem[] 
  */
 export function toggleMilestoneStatus(
   milestones: readonly TimelineMilestone[],
-  milestoneId: string
+  milestoneId: string,
 ): TimelineMilestone[] {
   return milestones.map((m) =>
-    m.id === milestoneId ? { ...m, isCompleted: !m.isCompleted } : m
+    m.id === milestoneId ? { ...m, isCompleted: !m.isCompleted } : m,
   );
 }
 
@@ -369,7 +374,7 @@ export function toggleMilestoneStatus(
  * @returns Integer percentage between 0 and 100.
  */
 export function calculatePlanningProgress(
-  milestones: readonly TimelineMilestone[]
+  milestones: readonly TimelineMilestone[],
 ): number {
   if (milestones.length === 0) return 0;
   const completed = milestones.filter((m) => m.isCompleted).length;

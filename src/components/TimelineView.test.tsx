@@ -13,8 +13,8 @@ describe("TimelineView Component", () => {
       targetDaysBeforeEvent: 180,
       targetDate: "2027-02-01",
       isCompleted: false,
-      priority: "high"
-    }
+      priority: "high",
+    },
   ];
 
   const mockRunOfShow: RunOfShowItem[] = [
@@ -24,8 +24,8 @@ describe("TimelineView Component", () => {
       activity: "Ceremony Procession",
       leadPerson: "Officiant",
       location: "Sanctuary",
-      isCompleted: false
-    }
+      isCompleted: false,
+    },
   ];
 
   it("renders milestones and calls onToggleMilestone when checked", () => {
@@ -36,7 +36,7 @@ describe("TimelineView Component", () => {
         runOfShow={mockRunOfShow}
         onToggleMilestone={handleToggle}
         onToggleRunOfShowItem={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText("Reserve Wedding Venue")).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe("TimelineView Component", () => {
         runOfShow={mockRunOfShow}
         onToggleMilestone={vi.fn()}
         onToggleRunOfShowItem={vi.fn()}
-      />
+      />,
     );
 
     const rosBtn = screen.getByRole("button", { name: /Day-Of Run-of-Show/i });
